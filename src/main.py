@@ -25,7 +25,7 @@ from src.portfolio.manager import get_portfolio_manager
 from src.portfolio.risk import get_risk_manager
 from src.signals.buy_signal import generate_buy_signals
 from src.signals.sell_signal import generate_sell_signals, check_stop_losses
-from src.notifications.twilio_sms import get_approval_manager, get_sms_client
+from src.notifications.telegram_bot import get_approval_manager, get_telegram_client
 from src.executor.trade_executor import get_trade_executor
 from src.db.models import get_database
 from src.logger import main_log
@@ -41,7 +41,7 @@ class TradingBot:
         self.risk = get_risk_manager()
         self.approval = get_approval_manager()
         self.executor = get_trade_executor()
-        self.sms = get_sms_client()
+        self.telegram = get_telegram_client()
         self.db = get_database()
         self.scheduler = None
         self.tz = pytz.timezone(self.config.market.timezone)
@@ -55,8 +55,8 @@ class TradingBot:
             print("\nPlease run: python src/credentials.py --setup")
             return False
 
-        if not self.creds.is_twilio_configured():
-            main_log.error("Twilio credentials not configured!")
+        if not self.creds.is_telegram_configured():
+            main_log.error("Telegram credentials not configured!")
             print("\nPlease run: python src/credentials.py --setup")
             return False
 
@@ -185,7 +185,7 @@ class TradingBot:
         """Send daily portfolio summary at market close."""
         try:
             portfolio = self.portfolio.get_portfolio_value()
-            self.sms.send_daily_summary(portfolio)
+            self.telegram.send_daily_summary(portfolio)
             main_log.info("Daily summary sent")
         except Exception as e:
             main_log.error(f"Failed to send daily summary: {e}")

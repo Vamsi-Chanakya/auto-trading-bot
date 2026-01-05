@@ -67,7 +67,7 @@ paper_trading:
 # NOTIFICATIONS
 # ============================================================================
 notifications:
-  sms_enabled: true
+  telegram_enabled: true
 
   # Alert types
   send_on_signal: true          # Alert when new signal detected

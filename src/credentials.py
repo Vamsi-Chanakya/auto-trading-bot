@@ -24,10 +24,8 @@ class CredentialKeys:
     WEBULL_PASSWORD = "webull_password"
     WEBULL_TRADING_PIN = "webull_trading_pin"
     WEBULL_DEVICE_ID = "webull_device_id"
-    TWILIO_ACCOUNT_SID = "twilio_account_sid"
-    TWILIO_AUTH_TOKEN = "twilio_auth_token"
-    TWILIO_PHONE_NUMBER = "twilio_phone_number"
-    USER_PHONE_NUMBER = "user_phone_number"
+    TELEGRAM_BOT_TOKEN = "telegram_bot_token"
+    TELEGRAM_CHAT_ID = "telegram_chat_id"
 
 
 class CredentialManager:
@@ -81,22 +79,14 @@ class CredentialManager:
     def webull_device_id(self) -> Optional[str]:
         return self._get(CredentialKeys.WEBULL_DEVICE_ID)
 
-    # Twilio Credentials
+    # Telegram Credentials
     @property
-    def twilio_account_sid(self) -> Optional[str]:
-        return self._get(CredentialKeys.TWILIO_ACCOUNT_SID)
+    def telegram_bot_token(self) -> Optional[str]:
+        return self._get(CredentialKeys.TELEGRAM_BOT_TOKEN)
 
     @property
-    def twilio_auth_token(self) -> Optional[str]:
-        return self._get(CredentialKeys.TWILIO_AUTH_TOKEN)
-
-    @property
-    def twilio_phone_number(self) -> Optional[str]:
-        return self._get(CredentialKeys.TWILIO_PHONE_NUMBER)
-
-    @property
-    def user_phone_number(self) -> Optional[str]:
-        return self._get(CredentialKeys.USER_PHONE_NUMBER)
+    def telegram_chat_id(self) -> Optional[str]:
+        return self._get(CredentialKeys.TELEGRAM_CHAT_ID)
 
     def is_webull_configured(self) -> bool:
         """Check if Webull credentials are configured."""
@@ -106,18 +96,16 @@ class CredentialManager:
             self.webull_trading_pin
         ])
 
-    def is_twilio_configured(self) -> bool:
-        """Check if Twilio credentials are configured."""
+    def is_telegram_configured(self) -> bool:
+        """Check if Telegram credentials are configured."""
         return all([
-            self.twilio_account_sid,
-            self.twilio_auth_token,
-            self.twilio_phone_number,
-            self.user_phone_number
+            self.telegram_bot_token,
+            self.telegram_chat_id
         ])
 
     def is_fully_configured(self) -> bool:
         """Check if all credentials are configured."""
-        return self.is_webull_configured() and self.is_twilio_configured()
+        return self.is_webull_configured() and self.is_telegram_configured()
 
     def setup_webull(self):
         """Interactive setup for Webull credentials."""
@@ -140,30 +128,32 @@ class CredentialManager:
         print("\n[OK] Webull credentials stored securely in Keychain")
         return True
 
-    def setup_twilio(self):
-        """Interactive setup for Twilio credentials."""
-        print("\n=== Twilio Credential Setup ===")
-        print("Get your credentials from: https://console.twilio.com/")
-        print("They will NEVER be saved in plaintext files.\n")
+    def setup_telegram(self):
+        """Interactive setup for Telegram credentials."""
+        print("\n=== Telegram Bot Setup ===")
+        print("To create a Telegram bot:")
+        print("1. Open Telegram and message @BotFather")
+        print("2. Send /newbot and follow the prompts")
+        print("3. Copy the bot token you receive")
+        print("4. Message your new bot, then visit:")
+        print("   https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates")
+        print("5. Find your chat_id in the response")
+        print("\nCredentials will NEVER be saved in plaintext files.\n")
 
-        account_sid = input("Twilio Account SID: ").strip()
-        auth_token = getpass.getpass("Twilio Auth Token: ")
-        twilio_phone = input("Twilio Phone Number (e.g., +1234567890): ").strip()
-        user_phone = input("Your Phone Number (e.g., +1234567890): ").strip()
+        bot_token = getpass.getpass("Telegram Bot Token: ")
+        chat_id = input("Your Telegram Chat ID: ").strip()
 
         # Basic validation
-        if not account_sid.startswith("AC"):
-            print("Warning: Account SID usually starts with 'AC'")
+        if ":" not in bot_token:
+            print("Warning: Bot token usually contains a colon (:)")
 
-        if not twilio_phone.startswith("+"):
-            print("Warning: Phone numbers should start with '+' and country code")
+        if not chat_id.lstrip("-").isdigit():
+            print("Warning: Chat ID should be a number")
 
-        self._set(CredentialKeys.TWILIO_ACCOUNT_SID, account_sid)
-        self._set(CredentialKeys.TWILIO_AUTH_TOKEN, auth_token)
-        self._set(CredentialKeys.TWILIO_PHONE_NUMBER, twilio_phone)
-        self._set(CredentialKeys.USER_PHONE_NUMBER, user_phone)
+        self._set(CredentialKeys.TELEGRAM_BOT_TOKEN, bot_token)
+        self._set(CredentialKeys.TELEGRAM_CHAT_ID, chat_id)
 
-        print("\n[OK] Twilio credentials stored securely in Keychain")
+        print("\n[OK] Telegram credentials stored securely in Keychain")
         return True
 
     def setup_device_id(self, device_id: str):
@@ -178,10 +168,8 @@ class CredentialManager:
             CredentialKeys.WEBULL_PASSWORD,
             CredentialKeys.WEBULL_TRADING_PIN,
             CredentialKeys.WEBULL_DEVICE_ID,
-            CredentialKeys.TWILIO_ACCOUNT_SID,
-            CredentialKeys.TWILIO_AUTH_TOKEN,
-            CredentialKeys.TWILIO_PHONE_NUMBER,
-            CredentialKeys.USER_PHONE_NUMBER,
+            CredentialKeys.TELEGRAM_BOT_TOKEN,
+            CredentialKeys.TELEGRAM_CHAT_ID,
         ]:
             self._delete(key)
         print("[OK] All credentials cleared from Keychain")
@@ -193,10 +181,8 @@ class CredentialManager:
         print(f"Webull Password:   {'[OK]' if self.webull_password else '[NOT SET]'}")
         print(f"Webull PIN:        {'[OK]' if self.webull_trading_pin else '[NOT SET]'}")
         print(f"Webull Device ID:  {'[OK]' if self.webull_device_id else '[NOT SET]'}")
-        print(f"Twilio SID:        {'[OK]' if self.twilio_account_sid else '[NOT SET]'}")
-        print(f"Twilio Token:      {'[OK]' if self.twilio_auth_token else '[NOT SET]'}")
-        print(f"Twilio Phone:      {'[OK]' if self.twilio_phone_number else '[NOT SET]'}")
-        print(f"Your Phone:        {'[OK]' if self.user_phone_number else '[NOT SET]'}")
+        print(f"Telegram Token:    {'[OK]' if self.telegram_bot_token else '[NOT SET]'}")
+        print(f"Telegram Chat ID:  {'[OK]' if self.telegram_chat_id else '[NOT SET]'}")
         print(f"\nFully Configured:  {'YES' if self.is_fully_configured() else 'NO'}")
 
 
@@ -216,7 +202,7 @@ def main():
 
     if command == "--setup":
         creds.setup_webull()
-        creds.setup_twilio()
+        creds.setup_telegram()
         print("\n=== Setup Complete ===")
         creds.status()
 

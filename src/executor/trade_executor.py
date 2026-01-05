@@ -14,7 +14,7 @@ import time
 from src.webull_client import get_webull_client
 from src.portfolio.manager import get_portfolio_manager
 from src.portfolio.risk import get_risk_manager
-from src.notifications.twilio_sms import get_sms_client
+from src.notifications.telegram_bot import get_telegram_client
 from src.db.models import get_database, Signal, SignalStatus
 from src.config import get_config
 from src.logger import trade_log
@@ -28,7 +28,7 @@ class TradeExecutor:
         self.webull = get_webull_client()
         self.portfolio = get_portfolio_manager()
         self.risk = get_risk_manager()
-        self.sms = get_sms_client()
+        self.telegram = get_telegram_client()
         self.db = get_database()
         self._is_paper = self.config.paper_trading.enabled
 
@@ -132,8 +132,8 @@ class TradeExecutor:
             # Update signal status
             self._update_signal_status(signal.id, SignalStatus.EXECUTED, trade_id=trade.id)
 
-            # Send confirmation SMS
-            self.sms.send_execution_confirmation(
+            # Send confirmation via Telegram
+            self.telegram.send_execution_confirmation(
                 symbol=symbol,
                 action=action,
                 quantity=quantity,
@@ -236,8 +236,8 @@ class TradeExecutor:
             # Update signal status
             self._update_signal_status(signal.id, SignalStatus.EXECUTED, trade_id=trade.id)
 
-            # Send confirmation SMS
-            self.sms.send_execution_confirmation(
+            # Send confirmation via Telegram
+            self.telegram.send_execution_confirmation(
                 symbol=symbol,
                 action=action,
                 quantity=quantity,

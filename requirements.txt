@@ -18,14 +18,11 @@ sqlalchemy>=2.0.0
 # Scheduler
 apscheduler>=3.10.0
 
-# Notifications
-twilio>=8.10.0
+# Notifications (Telegram - free!)
+requests>=2.31.0
 
 # Secure Credential Storage (macOS Keychain)
 keyring>=24.0.0
-
-# HTTP requests
-requests>=2.31.0
 
 # Configuration
 pyyaml>=6.0

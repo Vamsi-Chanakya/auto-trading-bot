@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Auto Trading Bot for US stocks using Webull. Screens for undervalued stocks near 52-week lows, sends SMS approval requests via Twilio, and executes trades with strict risk controls.
+Auto Trading Bot for US stocks using Webull. Screens for undervalued stocks near 52-week lows, sends Telegram approval requests, and executes trades with strict risk controls.
 
 **Key Constraints:**
 - No hardcoded credentials (uses macOS Keychain)
 - Paper trading mode by default
 - Max 2 holdings at any time
 - Stop-loss at -5%, take-profit at +10%
-- SMS approval required before every trade
+- Telegram approval required before every trade
 - No day trading, no naked options
 
 ## Commands
@@ -62,7 +62,7 @@ Key singleton patterns: `get_database()`, `get_webull_client()`, `get_config()` 
 1. **Scheduler** triggers scan every 15 min during market hours (9:30-4 ET)
 2. **ValueScreener** finds stocks near 52-week lows with good fundamentals
 3. **SignalEngine** creates BUY/SELL signals based on criteria
-4. **TwilioSMS** sends approval request, waits for Y/N response
+4. **TelegramBot** sends approval request, waits for Y/N response
 5. **TradeExecutor** executes approved trades on Webull
 6. **PortfolioManager** records trades, tracks P&L
 7. **RiskManager** enforces position limits and drawdown rules
@@ -84,7 +84,7 @@ Credentials are stored in macOS Keychain, never in files.
 | Change trading limits | `config/settings.yaml` |
 | Modify screening criteria | `src/screener/value_screener.py` |
 | Adjust technical indicators | `src/screener/technical.py` |
-| Change SMS message format | `src/notifications/twilio_sms.py` |
+| Change notification format | `src/notifications/telegram_bot.py` |
 | Add new risk controls | `src/portfolio/risk.py` |
 | Modify schedule timing | `src/main.py` (`start_scheduler` method) |
 | Add/modify DB tables | `src/db/models.py` |
