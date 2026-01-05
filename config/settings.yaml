@@ -1,0 +1,95 @@
+# Auto Trading App Configuration
+# NOTE: NO CREDENTIALS IN THIS FILE - they are stored in macOS Keychain
+
+# ============================================================================
+# TRADING LIMITS (Your Approved Configuration)
+# ============================================================================
+trading:
+  # Budget and position sizing
+  initial_budget: 1000          # Starting capital in USD
+  max_position_pct: 33          # Maximum % of budget per position (33% = $333)
+  max_holdings: 2               # Maximum number of stocks to hold at once
+
+  # Entry/Exit thresholds
+  stop_loss_pct: -5             # Sell if position drops 5%
+  take_profit_pct: 10           # Sell if position gains 10%
+
+  # Stock filters
+  min_stock_price: 5            # Minimum stock price ($5)
+  min_market_cap_millions: 500  # Minimum market cap ($500M)
+
+  # Timing
+  min_hold_days: 2              # Minimum days to hold before selling
+  approval_timeout_minutes: 15  # Trade approval SMS timeout
+
+  # Risk management
+  max_drawdown_pct: -15         # Pause trading if portfolio drops 15%
+  max_daily_trades: 4           # Maximum trades per day
+
+# ============================================================================
+# MARKET HOURS
+# ============================================================================
+market:
+  timezone: "America/New_York"
+  open_hour: 9
+  open_minute: 30
+  close_hour: 16
+  close_minute: 0
+
+  # Scan interval during market hours
+  scan_interval_minutes: 15
+
+# ============================================================================
+# SCREENING CRITERIA (Value + Momentum Strategy)
+# ============================================================================
+screener:
+  # Value criteria
+  max_pe_ratio: 25              # Maximum P/E ratio
+  near_52week_low_pct: 15       # Within 15% of 52-week low
+
+  # Technical criteria
+  rsi_oversold: 40              # RSI below this = oversold
+  rsi_overbought: 70            # RSI above this = overbought
+  volume_surge_pct: 150         # Volume above 150% of 20-day avg = surge
+
+  # Additional filters
+  min_avg_volume: 100000        # Minimum average daily volume
+  exclude_sectors: []           # Sectors to exclude (e.g., ["Energy", "Utilities"])
+
+# ============================================================================
+# PAPER TRADING MODE
+# ============================================================================
+paper_trading:
+  enabled: true                 # Start with paper trading!
+  starting_balance: 1000        # Simulated starting balance
+
+# ============================================================================
+# NOTIFICATIONS
+# ============================================================================
+notifications:
+  sms_enabled: true
+
+  # Alert types
+  send_on_signal: true          # Alert when new signal detected
+  send_on_execution: true       # Alert when trade executed
+  send_on_stop_loss: true       # Alert when stop-loss triggered
+  send_on_take_profit: true     # Alert when take-profit triggered
+  send_daily_summary: true      # Daily portfolio summary
+
+# ============================================================================
+# LOGGING
+# ============================================================================
+logging:
+  level: "INFO"                 # DEBUG, INFO, WARNING, ERROR
+  max_file_size_mb: 5
+  backup_count: 5
+
+# ============================================================================
+# DATA SOURCES
+# ============================================================================
+data_sources:
+  # Primary market data
+  primary: "yahoo_finance"      # Free, no API key needed
+
+  # Fundamentals (optional)
+  fundamentals: "yahoo_finance" # Can switch to financialmodelingprep if needed
