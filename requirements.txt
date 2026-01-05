@@ -30,6 +30,10 @@ pyyaml>=6.0
 # Timezone handling
 pytz>=2023.3
 
+# Dashboard
+streamlit>=1.29.0
+plotly>=5.18.0
+
 # Development & Testing
 pytest>=7.4.0
 pytest-asyncio>=0.21.0
